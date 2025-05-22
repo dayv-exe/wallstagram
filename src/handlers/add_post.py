@@ -18,6 +18,7 @@ def handler(event, context, table=None):
     try:
         body = json.loads(event['body'])
         post_id = str(uuid.uuid4())
+
         post_date = str(datetime.now())
         new_post = {
             'id': post_id,
