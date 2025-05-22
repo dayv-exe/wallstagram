@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for Hello Lambda + API Gateway with CORS + DynamoDB todos table.
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: python3.13
+    Handler: app.lambda_handler
+    MemorySize: 128
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref PostsTable
+
+Resources:
+
+  AddPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/add_post.handler
+      Description: Lambda function that add post to dynamodb
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /new
+            Method: POST
+            ApiId: !Ref WallApi
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostsTable
+
+  WallApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+        AllowOrigins:
+          - '*'
+        AllowHeaders:
+          - '*'
+      StageName: prod
+
+  PostsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+Outputs:
+  WallApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${WallApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
