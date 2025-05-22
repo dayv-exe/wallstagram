@@ -1,0 +1,1 @@
+# gets a post with given id
