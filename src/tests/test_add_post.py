@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock
 import pytest
-from ..handlers.add_post import handler
+from src.handlers.add_post import handler
 
 
 @pytest.fixture
@@ -11,12 +11,13 @@ def mock_table():
 
 
 def test_handler_success(mock_table):
-    mock_event = {'body': {
+    mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
+    mock_event = {'body': json.dumps({
         'message': 'test message',
         'sender': 'test user'
-    }}
-    mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
-    res = handler(mock_event, context={})
+    })}
 
-    body = json.loads(res['body'])
-    assert body['response'] == 200
+    res = handler(event=mock_event, context={}, table=mock_table)
+    assert res['statusCode'] == 201
+
+    message = json.loads(res['body'])
