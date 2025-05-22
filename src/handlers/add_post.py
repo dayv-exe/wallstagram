@@ -1,4 +1,4 @@
-# adds post
+# adds post.
 import json
 import os
 import uuid
@@ -26,9 +26,7 @@ def handler(event, context, table=None):
             'sender': body['sender'],
             'date_added': post_date
         }
-
         table.put_item(Item=new_post)
-
         return {
             'statusCode': 201,
             'body': json.dumps({
