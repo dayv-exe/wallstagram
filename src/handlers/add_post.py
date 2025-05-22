@@ -27,7 +27,7 @@ def handler(event, context, table=None):
             'date_added': post_date
         }
 
-        table.put_item(Item=new_post)
+        #table.put_item(Item=new_post)
 
         return {
             'statusCode': 201,
