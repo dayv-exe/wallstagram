@@ -7,7 +7,7 @@ Globals:
     Timeout: 10
     Runtime: python3.13
     Handler: app.lambda_handler
-    MemorySize: 128
+    MemorySize: 1024
     Environment:
       Variables:
         TABLE_NAME: !Ref PostsTable
@@ -17,6 +17,8 @@ Resources:
   AddPostFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Architectures:
+        - arm64
       CodeUri: src/
       Handler: handlers/add_post.handler
       Description: Lambda function that add post to dynamodb
