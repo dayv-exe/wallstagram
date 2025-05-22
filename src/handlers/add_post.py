@@ -3,13 +3,13 @@ import json
 import os
 import uuid
 from datetime import datetime
-import boto3
-from botocore.exceptions import ClientError
+
 
 
 def get_table():
-    dynamodb = boto3.resource('dynamodb')
-    return dynamodb.Table(os.environ['TABLE_NAME'])
+    # dynamodb = boto3.resource('dynamodb')
+    # return dynamodb.Table(os.environ['TABLE_NAME'])
+    pass
 
 def handler(event, context, table=None):
     if table is None:
@@ -43,10 +43,10 @@ def handler(event, context, table=None):
             })
         }
 
-    except ClientError as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': 'Somthing went wrong, try again.'
-            })
-        }
+    # except ClientError as e:
+    #     return {
+    #         'statusCode': 500,
+    #         'body': json.dumps({
+    #             'error': 'Somthing went wrong, try again.'
+    #         })
+    #     }
