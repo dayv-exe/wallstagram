@@ -44,6 +44,6 @@ jobs:
         run: |
           sam deploy --no-confirm-changeset --no-fail-on-empty-changeset \
             --resolve-s3 \
-            --stack-name helloer \
+            --stack-name wallstagram \
             --capabilities CAPABILITY_IAM \
             --region ${{ secrets.AWS_DEFAULT_REGION }}
