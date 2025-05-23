@@ -28,7 +28,7 @@ def handler(event, _, table=None):
             return {
                 'statusCode': 400,
                 'body': json.dumps({
-                    'error': 'Post data is incomplete.'
+                    'error': 'Invalid request body.'
                 })
             }
 
