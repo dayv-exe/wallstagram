@@ -23,7 +23,7 @@ def handler(event, _, table=None):
         post_sender: str = body['sender']
         post_date = str(datetime.now())  # gets current date and time
 
-        if post_message is None or post_sender is None:
+        if len(post_message.strip()) < 1 or len(post_sender.strip()) < 2:
             # if post data is incomplete
             return {
                 'statusCode': 400,
