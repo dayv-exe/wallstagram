@@ -30,7 +30,7 @@ def handler(event, context, table=None):
         return {
             'statusCode': 201,
             'body': json.dumps({
-                'message': f'Added new post with id {post_id}'
+                'message': f'Added new post with id: {post_id}'
             })
         }
     except (json.JSONDecodeError, KeyError):
