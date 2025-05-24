@@ -6,12 +6,14 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
 
+#-post (stores post metadata):
+#    pk: POST#{post_id}, sk: USER#{username}, post_body, post_date (post table)
 
 def get_table():
     dynamodb = boto3.resource('dynamodb')
-    return dynamodb.Table(os.environ['TABLE_NAME'])
+    return dynamodb.Table(os.environ['POSTS_TABLE_NAME'])
 
-def handler(event, _, table=None):
+def handler(event, context, table=None):
     if table is None:
         # get table if none is parsed (for testing)
         table = get_table()
@@ -32,13 +34,14 @@ def handler(event, _, table=None):
                 })
             }
 
-        # create new post object to send to db
+        # create new post object to send to post db
         new_post = {
-            'id': post_id,
-            'message': post_message,
-            'sender': post_sender,
-            'date_added': post_date
+            'pk': f"POST#{post_id}",
+            'sk': f"USERNAME#{post_sender}",
+            'post_body': post_message,
+            'post_date': post_date
         }
+
         table.put_item(Item=new_post)  # add new post to db
         return {
             # everything is okay :)

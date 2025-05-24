@@ -1,0 +1,20 @@
+#pk: string, hash
+#sk: string, range
+#types: [USER, POST, LIKES, COMMENTS],
+
+#attributes:
+
+#-user (stores users metadata):
+#    pk: USER#{username}, sk: METADATA, num_of_posts, bio_text (users table)
+
+#-post (stores post metadata):
+#    pk: USER#{username}, sk: POST#{post_id}, post_body, post_date (users table)
+#    pk: POST#{post_id}, sk: USER#{username}, post_body, post_date (post table)
+
+#-likes (each row will represent each like [wildly inefficient]):
+#    pk: LIKE#{post_id}, sk: USER#{user_id(user that liked the post)}, like_date (post table)
+#    pk: USER#{username(user that liked the post)}, sk: LIKE#{post_id}, like_date (users table)
+
+#-comments (each row will represent each comment [wildly inefficient, maybe?]):
+#    pk: COMMENT#{post_id}, sk: USER#{user_id(user that commented)}, comment (post table)
+#    pk: USER#{username(user that commented)}, sk: COMMENT#{post_id}, comment (users table)
