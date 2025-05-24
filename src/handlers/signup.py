@@ -1,17 +1,17 @@
-# adds post.
+# adds user.
 import json
 import os
-import uuid
 from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
 
-#-post (stores post metadata):
-#    pk: POST#{post_id}, sk: USER#{username}, post_body, post_date (post table)
+#-users (stores users metadata):
+#    pk: USERNAME#{username}, sk: META, date_joined (post table)
+#    pk: USERNAME${username}, sk: FOLLOWS#{username}  # to store follower data
 
 def get_table():
     dynamodb = boto3.resource('dynamodb')
-    return dynamodb.Table(os.environ['POSTS_TABLE_NAME'])
+    return dynamodb.Table(os.environ['USERS_TABLE_NAME'])
 
 def handler(event, context, table=None):
     if table is None:
@@ -20,12 +20,10 @@ def handler(event, context, table=None):
 
     try:
         body = json.loads(event['body'])  # loads content of the post body
-        post_date = str(datetime.now())  # gets current date and time
-        post_id = post_date + "#" + str(uuid.uuid4())  # generates random uuid
-        post_message = str(body['message'])
-        post_sender: str = body['sender']
+        username = body['username']
+        date_joined = str(datetime.now())
 
-        if len(post_message.strip()) < 1 or len(post_sender.strip()) < 2:
+        if len(username.strip()) < 1:
             # if post data is incomplete
             return {
                 'statusCode': 400,
@@ -34,19 +32,19 @@ def handler(event, context, table=None):
                 })
             }
 
-        # create new post object to send to post db
+        # create new user object to send to post db
         new_post = {
-            'pk': f"USERNAME#{post_sender}",
-            'sk': f"POST#{post_id}",
-            'post_body': post_message,
+            'pk': f"USERNAME#{username}",
+            'sk': f"META",
+            'date_joined': date_joined
         }
 
-        table.put_item(Item=new_post)  # add new post to db
+        table.put_item(Item=new_post)  # add new user to db
         return {
             # everything is okay :)
             'statusCode': 201,
             'body': json.dumps({
-                'message': post_id
+                'message': f"Added {username} successfully."
             })
         }
     except (json.JSONDecodeError, KeyError):

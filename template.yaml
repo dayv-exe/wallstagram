@@ -11,6 +11,7 @@ Globals:
     Environment:
       Variables:
         POSTS_TABLE_NAME: !Ref PostsTable
+        USERS_TABLE_NAME: !Ref UsersTable
 
 Resources:
 
@@ -33,6 +34,25 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref PostsTable
 
+  SignupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures:
+        - arm64
+      CodeUri: src/
+      Handler: handlers/signup.handler
+      Description: Lambda function that add user to dynamodb
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /signup
+            Method: POST
+            ApiId: !Ref WallApi
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+
   WallApi:
     Type: AWS::Serverless::HttpApi
     Properties:
@@ -47,6 +67,21 @@ Resources:
       StageName: prod
 
   PostsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
       BillingMode: PAY_PER_REQUEST
