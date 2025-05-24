@@ -20,10 +20,10 @@ def handler(event, context, table=None):
 
     try:
         body = json.loads(event['body'])  # loads content of the post body
-        post_id = str(uuid.uuid4())  # generates random uuid
+        post_date = str(datetime.now())  # gets current date and time
+        post_id = post_date + str(uuid.uuid4())  # generates random uuid
         post_message = str(body['message'])
         post_sender: str = body['sender']
-        post_date = str(datetime.now())  # gets current date and time
 
         if len(post_message.strip()) < 1 or len(post_sender.strip()) < 2:
             # if post data is incomplete
