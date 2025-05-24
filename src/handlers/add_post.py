@@ -21,7 +21,7 @@ def handler(event, context, table=None):
     try:
         body = json.loads(event['body'])  # loads content of the post body
         post_date = str(datetime.now())  # gets current date and time
-        post_id = post_date + str(uuid.uuid4())  # generates random uuid
+        post_id = post_date + "#" + str(uuid.uuid4())  # generates random uuid
         post_message = str(body['message'])
         post_sender: str = body['sender']
 
