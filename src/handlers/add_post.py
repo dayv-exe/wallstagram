@@ -36,8 +36,8 @@ def handler(event, context, table=None):
 
         # create new post object to send to post db
         new_post = {
-            'pk': f"POST#{post_id}",
-            'sk': f"USERNAME#{post_sender}",
+            'pk': f"USERNAME#{post_sender}",
+            'sk': f"POST#{post_id}",
             'post_body': post_message,
             'post_date': post_date
         }
