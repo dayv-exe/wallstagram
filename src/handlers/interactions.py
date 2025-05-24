@@ -43,7 +43,7 @@ def handle_follow(this_user, other_user, table):
         return {
             'statusCode': 500,
             'body': json.dumps({
-                'error': 'Somthing went wrong.'
+                'error': f'Somthing went wrong.\n{e}'
             })
         }
 
@@ -80,7 +80,7 @@ def handle_unfollow(this_user, other_user, table):
         return {
             'statusCode': 500,
             'body': json.dumps({
-                'error': 'Somthing went wrong.'
+                'error': f'Somthing went wrong.\n{e}'
             })
         }
 
