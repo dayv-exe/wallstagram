@@ -53,6 +53,25 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
 
+  InteractionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures:
+        - arm64
+      CodeUri: src/
+      Handler: handlers/interactions.handler
+      Description: Lambda function that allows users to follow or unfollow other users
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /user/{username}/{operation}
+            Method: POST
+            ApiId: !Ref WallApi
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+
   WallApi:
     Type: AWS::Serverless::HttpApi
     Properties:
