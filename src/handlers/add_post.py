@@ -6,8 +6,8 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
 
-from src.shared.Post import Post
-from src.shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res
+from shared.Post import Post
+from shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res
 
 
 def get_table():
