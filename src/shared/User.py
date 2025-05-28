@@ -15,7 +15,7 @@ class User:
             'pk': f"USERNAME#{self.username}",
             'sk': f"USER",
             'num_posts': self.num_posts,
-            'date_joined': self.date_joined,
+            'date_joined': f"{self.date_joined}",
         }
 
     @staticmethod
