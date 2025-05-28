@@ -13,7 +13,7 @@ from botocore.exceptions import ClientError
 def handle_follow(this_user, other_user, table):
     # insert into the table pk: USERNAME#{this_user}, sk: FOLLOWS#{other_user} to store follower data
     try:
-        if len(this_user.strip()) < 2 or len(other_user.strip()) < 2:
+        if (len(this_user.strip()) < 2 or len(other_user.strip()) < 2) or this_user == other_user:
             return {
                 'statusCode': 400,
                 'body': json.dumps({

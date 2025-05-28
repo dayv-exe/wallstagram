@@ -14,7 +14,7 @@ def test_handler_success(mock_table):
     mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
     mock_event = {'body': json.dumps({
         'message': 'test message',
-        'sender': 'test user'
+        'author': 'test user'
     })}
 
     res = handler(event=mock_event, context={}, table=mock_table)
@@ -25,7 +25,7 @@ def test_empty_param(mock_table):
     mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
     mock_event = {'body': json.dumps({
         '': 'test message',
-        'sender': 'test user'
+        'author': 'test user'
     })}
 
     res = handler(event=mock_event, context={}, table=mock_table)
@@ -36,7 +36,7 @@ def test_empty_sender(mock_table):
     mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
     mock_event = {'body': json.dumps({
         'message': 'test message',
-        'sender': '   '
+        'author': '   '
     })}
 
     res = handler(event=mock_event, context={}, table=mock_table)
@@ -47,7 +47,7 @@ def test_empty_message(mock_table):
     mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
     mock_event = {'body': json.dumps({
         'message': ' ',
-        'sender': 'test'
+        'author': 'test'
     })}
 
     res = handler(event=mock_event, context={}, table=mock_table)
@@ -57,7 +57,7 @@ def test_empty_message(mock_table):
 def test_invalid_json_format(mock_table):
     mock_table.put_item.return_value = {}  # simulates successful insert into dynamodb
     mock_event = {'body': json.dumps({
-        'sender': 'test sender',
+        'author': 'test sender',
     })}
 
     res = handler(event=mock_event, context={}, table=mock_table)

@@ -1,1 +1,0 @@
-# gets all posts

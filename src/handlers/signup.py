@@ -5,9 +5,9 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
 
-#-users (stores users metadata):
-#    pk: USERNAME#{username}, sk: META, date_joined (post table)
-#    pk: USERNAME${username}, sk: FOLLOWS#{username}  # to store follower data
+from src.shared.User import User
+from src.shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res
+
 
 def get_table():
     dynamodb = boto3.resource('dynamodb')
@@ -21,47 +21,20 @@ def handler(event, context, table=None):
     try:
         body = json.loads(event['body'])  # loads content of the post body
         username = body['username']
-        date_joined = str(datetime.now())
 
         if len(username.strip()) < 1:
-            # if post data is incomplete
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'error': 'Invalid request body.'
-                })
-            }
+            # if posts data is incomplete
+            return invalid_request_error_res()
 
-        # create new user object to send to post db
-        new_post = {
-            'pk': f"USERNAME#{username}",
-            'sk': f"META",
-            'date_joined': date_joined
-        }
+        # create a new user object to send to the table
+        table.put_item(Item=User(username=username, num_posts=0, date_joined=datetime.now()).database_format())  # add new user to db
+        return created_successfully_res()
 
-        table.put_item(Item=new_post)  # add new user to db
-        return {
-            # everything is okay :)
-            'statusCode': 201,
-            'body': json.dumps({
-                'message': f"Added {username} successfully."
-            })
-        }
     except (json.JSONDecodeError, KeyError):
         # if there is a problem decoding the json parsed in request body
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
-                'error': 'Invalid request body.'
-            })
-        }
+        return invalid_request_error_res()
 
-    except ClientError as e:
+    except (ClientError, Exception) as e:
         # somthing has gone terribly wrong :(
         print(e)  # print the error message and don't send it to client
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': 'Somthing went wrong, try again.'
-            })
-        }
+        server_error_res()

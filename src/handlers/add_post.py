@@ -6,12 +6,15 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
 
-#-post (stores post metadata):
-#    pk: POST#{post_id}, sk: USER#{username}, post_body, post_date (post table)
+from src.shared.Post import Post
+from src.shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res
+
 
 def get_table():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table(os.environ['TABLE_NAME'])
+
+
 
 def handler(event, context, table=None):
     if table is None:
@@ -20,50 +23,28 @@ def handler(event, context, table=None):
 
     try:
         body = json.loads(event['body'])  # loads content of the post body
-        post_date = str(datetime.now())  # gets current date and time
-        post_id = post_date + "#" + str(uuid.uuid4())  # generates random uuid
         post_message = str(body['message'])
-        post_sender: str = body['sender']
+        post_author: str = body['author']
 
-        if len(post_message.strip()) < 1 or len(post_sender.strip()) < 2:
+        if len(post_message.strip()) < 1 or len(post_author.strip()) < 2:
             # if post data is incomplete
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'error': 'Invalid request body.'
-                })
-            }
+            return invalid_request_error_res()
 
         # create new post object to send to post db
-        new_post = {
-            'pk': f"USERNAME#{post_sender}",
-            'sk': f"POST#{post_id}",
-            'post_body': post_message,
-        }
 
-        table.put_item(Item=new_post)  # add new post to db
-        return {
-            # everything is okay :)
-            'statusCode': 201,
-            'body': json.dumps({
-                'message': post_id
-            })
-        }
+        table.put_item(Item=Post(
+            post_id=str(uuid.uuid4()),
+            post_author=post_author,
+            post_message=post_message,
+            post_date=datetime.now()
+        ).database_format())  # add new post to db
+        return created_successfully_res()
+
     except (json.JSONDecodeError, KeyError):
         # if there is a problem decoding the json parsed in request body
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
-                'error': 'Invalid request body.'
-            })
-        }
+        return invalid_request_error_res()
 
-    except ClientError as e:
+    except (ClientError, Exception) as e:
         # somthing has gone terribly wrong :(
         print(e)  # print the error message and don't send it to client
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': 'Somthing went wrong, try again.'
-            })
-        }
+        return server_error_res()
