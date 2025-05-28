@@ -92,7 +92,7 @@ OPERATIONS = {
 def get_table():
     # returns table associated with this function
     dynamodb = boto3.resource("dynamodb")
-    return dynamodb.Table(os.environ['USERS_TABLE_NAME'])
+    return dynamodb.Table(os.environ['TABLE_NAME'])
 
 def handler(event, context, table=None):
     # /user/{username}/{operation}
