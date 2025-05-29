@@ -23,7 +23,7 @@ def handle_follow(this_user, other_user, table):
         return invalid_request_error_res()
 
     except (ClientError, Exception) as e:
-        return server_error_res()
+        return server_error_res(e)
 
 
 def handle_unfollow(this_user, other_user, table):
@@ -41,7 +41,7 @@ def handle_unfollow(this_user, other_user, table):
         return invalid_request_error_res()
 
     except (ClientError, Exception) as e:
-        return server_error_res()
+        return server_error_res(e)
 
 OPERATIONS = {
     'follow': handle_follow,

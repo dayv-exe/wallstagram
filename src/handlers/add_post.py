@@ -31,13 +31,13 @@ def handler(event, context, table=None):
             return invalid_request_error_res()
 
         # create new post object to send to post db
-
-        table.put_item(Item=Post(
+        new_post = Post(
             post_id=str(uuid.uuid4()),
             post_author=post_author,
             post_message=post_message,
             post_date=datetime.now()
-        ).database_format())  # add new post to db
+        ).database_format()
+        table.put_item(Item=new_post)  # add new post to db
         return created_successfully_res()
 
     except (json.JSONDecodeError, KeyError):
@@ -46,5 +46,4 @@ def handler(event, context, table=None):
 
     except (ClientError, Exception) as e:
         # somthing has gone terribly wrong :(
-        print(e)  # print the error message and don't send it to client
-        return server_error_res()
+        return server_error_res(e)

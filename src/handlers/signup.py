@@ -36,5 +36,4 @@ def handler(event, context, table=None):
 
     except (ClientError, Exception) as e:
         # somthing has gone terribly wrong :(
-        print(e)  # print the error message and don't send it to client
-        return server_error_res()
+        return server_error_res(e)

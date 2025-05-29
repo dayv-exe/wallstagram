@@ -9,21 +9,22 @@ def invalid_request_error_res(msg:str=None):
         })
     }
 
-def server_error_res(msg:str=None):
+def server_error_res(error: str):
+    print(f"FATAL LAMBDA EXECUTION ERROR: {error}")
     return {
         'statusCode': 500,
         'body': json.dumps({
-            'error': msg or 'Something went wrong, try again.'
+            'error': 'Something went wrong, try again.'
         })
     }
 
 def created_successfully_res(msg:str=None):
-    return json.dumps({
+    return {
         'statusCode': 201,
-        'body': {
+        'body': json.dumps({
             'message': msg or 'Item added successfully.'
-        }
-    })
+        })
+    }
 
 def request_success_res(msg:str=None):
     return {
