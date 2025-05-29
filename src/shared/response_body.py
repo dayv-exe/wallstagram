@@ -24,3 +24,11 @@ def created_successfully_res():
             'message': 'Item added successfully.'
         })
     }
+
+def request_success_res():
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'message': 'Request completed successfully.'
+        })
+    }

@@ -22,8 +22,8 @@ class User:
     def json_format(pk: str, num_posts: int, date_joined: datetime):
         # converts user details gotten from dynamodb to readable JSON format using our access pattern
         username = pk.split('#')[1]
-        return json.dumps({
+        return {
             'username': username,
             'number_of_posts': num_posts,
             'date_joined': date_joined
-        })
+        }

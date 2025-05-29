@@ -26,9 +26,9 @@ class Post:
         post_author = pk.split("#")[1]
         post_date = post_meta_arr[1]
 
-        return json.dumps({
+        return {
             'id': post_id,
             'author': post_author,
             'message': post_message,
             'date': post_date
-        })
+        }

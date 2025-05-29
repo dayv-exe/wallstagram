@@ -5,84 +5,43 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
+from shared.Interaction import Follow
+from shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res, \
+    request_success_res
 
-#-users (stores users metadata):
-#    pk: USERNAME#{username}, sk: META, date_joined (post table)
-#    pk: USERNAME#{username}, sk: FOLLOWS#{username}  # to store follower data
 
 def handle_follow(this_user, other_user, table):
     # insert into the table pk: USERNAME#{this_user}, sk: FOLLOWS#{other_user} to store follower data
     try:
         if (len(this_user.strip()) < 2 or len(other_user.strip()) < 2) or this_user == other_user:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'error': 'Invalid request.'
-                })
-            }
+            return invalid_request_error_res()
 
-        new_data = {
-            'pk': f'USERNAME#{this_user}',
-            'sk': f'FOLLOWS#{other_user}'
-        }
-        table.put_item(Item=new_data)
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'message': f'{this_user} now follows {other_user}'
-            })
-        }
+        table.put_item(Item=Follow(this_user, other_user).database_format())
+        return created_successfully_res()
+
     except (json.JSONDecodeError, KeyError):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
-                'error': 'Invalid request.'
-            })
-        }
-    except ClientError as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': f'Somthing went wrong.\n{e}'
-            })
-        }
+        return invalid_request_error_res()
+
+    except (ClientError, Exception) as e:
+        return server_error_res()
 
 
 def handle_unfollow(this_user, other_user, table):
     # delete from the table pk: USERNAME#{this_user}, sk: FOLLOWS#{other_user} to store follower data
     try:
         if len(this_user.strip()) < 2 or len(other_user.strip()) < 2:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'error': 'Invalid request.'
-                })
-            }
+            return invalid_request_error_res()
 
         table.delete_item(Key={
-            'pk': f'USERNAME#{this_user}',
-            'sk': f'FOLLOWS#{other_user}'
+            Follow(this_user, other_user).database_format()
         })
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'message': f'{this_user} unfollowed {other_user}'
-            })
-        }
+        return request_success_res()
+
     except (json.JSONDecodeError, KeyError):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
-                'error': 'Invalid request.'
-            })
-        }
-    except ClientError as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': f'Somthing went wrong.\n{e}'
-            })
-        }
+        return invalid_request_error_res()
+
+    except (ClientError, Exception) as e:
+        return server_error_res()
 
 OPERATIONS = {
     'follow': handle_follow,
@@ -110,9 +69,4 @@ def handler(event, context, table=None):
         return OPERATIONS[operation](this_user, other_user, table)
     else:
         # if the operation in the url is invalid
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
-                'error': 'Invalid request.'
-            })
-        }
+        return invalid_request_error_res()
