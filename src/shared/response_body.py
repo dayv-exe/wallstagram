@@ -1,34 +1,34 @@
 import json
 
 
-def invalid_request_error_res():
+def invalid_request_error_res(msg:str=None):
     return {
         'statusCode': 400,
         'body': json.dumps({
-            'error': 'Invalid request body.'
+            'error': msg or 'Invalid request body.'
         })
     }
 
-def server_error_res():
+def server_error_res(msg:str=None):
     return {
         'statusCode': 500,
         'body': json.dumps({
-            'error': 'Something went wrong, try again.'
+            'error': msg or 'Something went wrong, try again.'
         })
     }
 
-def created_successfully_res():
-    return {
+def created_successfully_res(msg:str=None):
+    return json.dumps({
         'statusCode': 201,
-        'body': json.dumps({
-            'message': 'Item added successfully.'
-        })
-    }
+        'body': {
+            'message': msg or 'Item added successfully.'
+        }
+    })
 
-def request_success_res():
+def request_success_res(msg:str=None):
     return {
         'statusCode': 200,
         'body': json.dumps({
-            'message': 'Request completed successfully.'
+            'message': msg or 'Request completed successfully.'
         })
     }
