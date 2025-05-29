@@ -37,7 +37,7 @@ def handler(event, context, table=None):
             post_message=post_message,
             post_date=datetime.now()
         ).database_format()
-        table.put_item(Item={new_post})  # add new post to db
+        table.put_item(Item=new_post)  # add new post to db
         return created_successfully_res()
 
     except (json.JSONDecodeError, KeyError):
