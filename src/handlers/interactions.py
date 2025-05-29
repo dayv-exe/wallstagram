@@ -32,9 +32,7 @@ def handle_unfollow(this_user, other_user, table):
         if len(this_user.strip()) < 2 or len(other_user.strip()) < 2:
             return invalid_request_error_res()
 
-        table.delete_item(Key={
-            Follow(this_user, other_user).database_format()
-        })
+        table.delete_item(Key=Follow(this_user, other_user).database_format())
         return request_success_res()
 
     except (json.JSONDecodeError, KeyError):
