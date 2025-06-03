@@ -9,12 +9,19 @@ class User:
         self.date_joined = date_joined
         self.num_posts = num_posts
 
-    def database_format(self):
+    @staticmethod
+    def database_key(username: str) -> dict[str, str]:
+        return {
+            'pk': f'USERNAME#{username}',
+            'sk': 'USER'
+        }
+
+    def database_format(self) -> dict[str, str]:
         # formats the user info for storage in dynamodb following our access pattern
         return {
             'pk': f"USERNAME#{self.username}",
             'sk': f"USER",
-            'num_posts': self.num_posts,
+            'post_count': self.num_posts,
             'date_joined': f"{self.date_joined}",
         }
 
@@ -24,6 +31,6 @@ class User:
         username = pk.split('#')[1]
         return {
             'username': username,
-            'number_of_posts': num_posts,
-            'date_joined': date_joined
+            'post_count': num_posts,
+            'date_joined': str(date_joined)
         }

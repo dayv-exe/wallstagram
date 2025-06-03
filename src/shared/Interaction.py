@@ -21,3 +21,14 @@ class Follow:
             'follower': follower,
             'following': following
         }
+
+class PostCountData:
+    def __init__(self, username: str, increase_post_count: bool):
+        self.username = username
+        self.increase_post_count = increase_post_count
+
+    def json_format(self):
+        return json.dumps({
+            'username': self.username,
+            'increase_count': self.increase_post_count
+        })

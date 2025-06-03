@@ -11,8 +11,20 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref UsersTable
+        QUEUE_URL: !Ref PostCountQueue
 
 Resources:
+
+  PostCountDLQ:
+    Type: AWS::SQS::Queue
+
+  PostCountQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt PostCountDLQ.Arn
+        maxReceiveCount: 3
+
 
   AddPostFunction:
     Type: AWS::Serverless::Function
@@ -32,6 +44,31 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
+        - Statement:
+            Effect: Allow
+            Action:
+              - sqs:SendMessage
+            Resource: !GetAtt PostCountQueue.Arn
+
+  UpdatePostCountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/update_post_count.handler
+      Runtime: python3.13
+      Architectures:
+        - arm64
+      Description: Updates post count for a user
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt PostCountQueue.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+        - SQSPollerPolicy:
+            QueueName: !GetAtt PostCountQueue.QueueName
 
   SignupFunction:
     Type: AWS::Serverless::Function
