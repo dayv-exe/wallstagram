@@ -7,8 +7,8 @@ from shared.User import User
 
 
 def get_table():
-    dynamodb = boto3.resource("dynamodb")
-    return dynamodb.Table(os.environ["table_name"])
+    dynamodb = boto3.resource('dynamodb')
+    return dynamodb.Table(os.environ['TABLE_NAME'])
 
 def handler(event, context, table=None):
     if table is None:
