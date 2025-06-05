@@ -77,11 +77,14 @@ def handler(event, context, table=None):
     if table is None:
         table = get_table()
 
-    body = json.loads(event['body'])
+    try:
+        body = json.loads(event['body'])
 
-    this_user = body['username']
-    target = event['pathParameters']['target']
-    operation = event['pathParameters']['operation']
+        this_user = body['username']
+        target = event['pathParameters']['target']
+        operation = event['pathParameters']['operation']
+    except (json.JSONDecodeError, KeyError):
+        return invalid_request_error_res()
 
     if operation in OPERATIONS:
         # if a valid operation is to be carried out
