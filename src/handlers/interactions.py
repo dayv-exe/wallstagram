@@ -17,7 +17,7 @@ def handle_follow(this_user, other_user, table):
             return invalid_request_error_res()
 
         table.put_item(Item=Follow(this_user, other_user).database_format())
-        return created_successfully_res()
+        return request_success_res()
 
     except (json.JSONDecodeError, KeyError):
         return invalid_request_error_res()
