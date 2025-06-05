@@ -7,7 +7,8 @@ from botocore.exceptions import ClientError
 
 from shared.Interaction import Follow
 from shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res, \
-    request_success_res
+    request_success_res, not_found_res
+from shared.utils import user_exists
 
 
 def handle_follow(this_user, other_user, table):
@@ -15,6 +16,9 @@ def handle_follow(this_user, other_user, table):
     try:
         if (len(this_user.strip()) < 2 or len(other_user.strip()) < 2) or this_user == other_user:
             return invalid_request_error_res()
+
+        if not user_exists(other_user, table) or not user_exists(this_user, table):
+            return not_found_res('User not found.')
 
         table.put_item(Item=Follow(this_user, other_user).database_format())
         return request_success_res()
