@@ -3,8 +3,8 @@ import json
 def res_boiler(status_code: int, body: dict[str,str]):
     return {
         'statusCode': status_code,
-        'header': {
-            'content-type': 'application/json'
+        'headers': {
+            'Content-type': 'application/json'
         },
         'body': json.dumps(body)
     }
