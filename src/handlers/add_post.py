@@ -8,7 +8,8 @@ from botocore.exceptions import ClientError
 
 from shared.Interaction import PostCountData
 from shared.Post import Post
-from shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res
+from shared.response_body import invalid_request_error_res, created_successfully_res, server_error_res, not_found_res
+from shared.utils import user_exists
 
 
 def get_table():
@@ -46,6 +47,9 @@ def handler(event, context, table=None):
         if len(post_message.strip()) < 1 or len(post_author.strip()) < 2:
             # if post data is incomplete
             return invalid_request_error_res()
+
+        if not user_exists(post_author, table):
+            return not_found_res('User not found.')
 
         # create new post object to send to post db
         new_post = Post(

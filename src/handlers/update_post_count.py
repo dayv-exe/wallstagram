@@ -4,17 +4,13 @@ import boto3
 from botocore.exceptions import ClientError
 
 from shared.User import User
+from shared.utils import user_exists
 
 
 def get_table():
     # injects table
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table(os.environ['TABLE_NAME'])
-
-def user_exists(username: str, table) -> bool:
-    response = table.get_item(Key= User.database_key(username))
-    user = response.get('Item')
-    return user is not None
 
 def handler(event, context, table=None):
     if table is None:
