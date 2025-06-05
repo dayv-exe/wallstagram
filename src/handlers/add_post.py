@@ -1,9 +1,7 @@
-# adds post.
 import json
 import os
 import uuid
 from datetime import datetime
-from math import trunc
 
 import boto3
 from botocore.exceptions import ClientError

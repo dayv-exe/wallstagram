@@ -41,6 +41,22 @@ def handle_unfollow(this_user, other_user, table):
     except (ClientError, Exception) as e:
         return server_error_res(e)
 
+
+def handle_like(this_user, other_post, table):
+    pass
+
+
+def handle_unlike(this_user, other_post, table):
+    pass
+
+
+def handle_comment(this_user, other_post, table):
+    pass
+
+
+def handle_uncomment(this_user, other_post, table):
+    pass
+
 OPERATIONS = {
     'follow': handle_follow,
     'unfollow': handle_unfollow
@@ -52,19 +68,20 @@ def get_table():
     return dynamodb.Table(os.environ['TABLE_NAME'])
 
 def handler(event, context, table=None):
-    # /user/{username}/{operation}
+    # /user/{operation}/{target}
+    # in the case of follow, target is username, in case of like or comment target is a post_id
     if table is None:
         table = get_table()
 
     body = json.loads(event['body'])
 
     this_user = body['username']
-    other_user = event['pathParameters']['username']
+    target = event['pathParameters']['target']
     operation = event['pathParameters']['operation']
 
     if operation in OPERATIONS:
         # if a valid operation is to be carried out
-        return OPERATIONS[operation](this_user, other_user, table)
+        return OPERATIONS[operation](this_user, target, table)
     else:
         # if the operation in the url is invalid
         return invalid_request_error_res()

@@ -101,7 +101,7 @@ Resources:
         ApiEvent:
           Type: HttpApi
           Properties:
-            Path: /user/{username}/{operation}
+            Path: /user/{operation}/{target}
             Method: POST
             ApiId: !Ref WallApi
       Policies:

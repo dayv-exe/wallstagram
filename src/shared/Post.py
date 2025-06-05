@@ -19,6 +19,19 @@ class Post:
         }
 
     @staticmethod
+    def database_key(compound_post_id: str):
+        post_info = compound_post_id.split('#')
+
+        username = post_info[1]
+        post_uuid = post_info[0]
+        post_date = post_info[2]
+
+        return {
+            'pk': f'USERNAME#{username}',
+            'sk': f'POST#{post_date}#{post_uuid}'
+        }
+
+    @staticmethod
     def json_format(pk: str, sk: str, post_message: str):
         post_meta_arr = sk.split("#")
 
@@ -27,7 +40,7 @@ class Post:
         post_date = post_meta_arr[1]
 
         return {
-            'id': post_id,
+            'id': f'{post_id}#{post_author}#{post_date}',
             'author': post_author,
             'message': post_message,
             'date': post_date
